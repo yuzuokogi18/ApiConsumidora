@@ -2,12 +2,12 @@ package core
 
 import (
 	"apiConsumer/src/core/middleware"
-	"apiConsumer/src/orders/application"
-	"apiConsumer/src/orders/infrastructure"
+	"apiConsumer/src/reservation/application"
+	"apiConsumer/src/reservation/infrastructure"	
 	"log"
+	_ "github.com/lib/pq" 
 
 	"github.com/gin-gonic/gin"
-	"github.com/lib/pq"  // Importar pq para PostgreSQL
 )
 
 func InitRoutes() {
@@ -27,34 +27,32 @@ func InitRoutes() {
 	postgresRepository := infrastructure.NewPostgresRepository(postgresConn.DB)
 	rabbitmqRepository := infrastructure.NewRabbitRepository(rabbitmqCh.ch)
 
-	// Casos de uso de la API
-	createOrderUseCase := application.NewCreateOrderUseCase(rabbitmqRepository, postgresRepository)
-	updateOrderUseCase := application.NewUpdateOrderUseCase(postgresRepository)
-	deleteOrderUseCase := application.NewDeleteOrderUseCase(postgresRepository)
-	getAllOrdersUseCase := application.NewViewAllOrderUseCase(postgresRepository)
-	getOrderByIdUseCase := application.NewViewOrderByIdUseCase(postgresRepository)
-	getOrderByCellphoneUseCase := application.NewViewByCellphoneOrderUseCase(postgresRepository)
+	// Casos de uso de la API de Reservaciones
+	createReservationUseCase := application.NewCreateReservationUseCase(rabbitmqRepository, postgresRepository)
+	updateReservationUseCase := application.NewUpdateReservationUseCase(postgresRepository)
+	deleteReservationUseCase := application.NewDeleteReservationUseCase(postgresRepository)
+	getAllReservationsUseCase := application.NewViewAllReservationsUseCase(postgresRepository)
+	getReservationByIdUseCase := application.NewViewReservationByIdUseCase(postgresRepository)
 
 	// Controladores para cada endpoint
-	createOrderController := infrastructure.NewCreateOrderController(createOrderUseCase)
-	updateOrderController := infrastructure.NewUpdateOrderController(updateOrderUseCase)
-	deleteOrderController := infrastructure.NewDeleteOrderController(deleteOrderUseCase)
-	getAllOrdersController := infrastructure.NewViewAllOrderController(getAllOrdersUseCase)
-	getOrderByIdController := infrastructure.NewViewByIdOrderController(getOrderByIdUseCase)
-	getOrderByCellphoneController := infrastructure.NewViewByCellphoneOrderController(getOrderByCellphoneUseCase)
+	createReservationController := infrastructure.NewCreateReservationController(createReservationUseCase)
+	updateReservationController := infrastructure.NewUpdateReservationController(updateReservationUseCase)
+	deleteReservationController := infrastructure.NewDeleteReservationController(deleteReservationUseCase)
+	getAllReservationsController := infrastructure.NewViewAllReservationsController(getAllReservationsUseCase)
+    getReservationByIdController := infrastructure.NewViewReservationByIdController(getReservationByIdUseCase)
+
 
 	// Configurar el router de Gin
 	router := gin.Default()
 	corsMiddleware := middleware.NewCorsMiddleware()
 	router.Use(corsMiddleware)
 
-	// Rutas de la API
-	router.POST("/order", createOrderController.Execute)
-	router.PUT("/order/:id", updateOrderController.Execute)
-	router.DELETE("/order/:id", deleteOrderController.Execute)
-	router.GET("/order", getAllOrdersController.Execute)
-	router.GET("/order/:id", getOrderByIdController.Execute)
-	router.GET("/orders/cellphone/:cellphone", getOrderByCellphoneController.Execute)
+	// Rutas de la API de Reservaciones
+	router.POST("/reservation", createReservationController.Execute)
+	router.PUT("/reservation/:id", updateReservationController.Execute)
+	router.DELETE("/reservation/:id", deleteReservationController.Execute)
+	router.GET("/reservation", getAllReservationsController.Execute)
+	router.GET("/reservation/:id", getReservationByIdController.Execute)
 
 	// Iniciar el servidor en el puerto 8082
 	if err := router.Run(":8082"); err != nil {
