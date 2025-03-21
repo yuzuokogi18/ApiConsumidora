@@ -18,7 +18,7 @@ func main() {
     client := resty.New()
 
     // Conectar a RabbitMQ
-	conn, err := amqp.Dial("amqp://kika:kikaokogi@34.224.65.49:5672")
+	conn, err := amqp.Dial("amqp://kika:kikaokogi@44.194.169.99:5672")
     failOnError(err, "Failed to connect to RabbitMQ")
     defer conn.Close()
 

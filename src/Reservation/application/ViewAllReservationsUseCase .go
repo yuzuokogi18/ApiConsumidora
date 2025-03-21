@@ -2,7 +2,7 @@ package application
 
 import "apiConsumer/src/reservation/domain"
 
-type ViewAllReservationsUseCase struct { // Corrección en el nombre (agregado 's' en Reservations)
+type ViewAllReservationsUseCase struct { 
 	postgresRepository domain.IReservationPostgres
 }
 
